@@ -22,9 +22,18 @@ public class LoginActivity extends AppCompatActivity {
         instagram = new Instagram(this, Configuration.clientId, Configuration.clientSecret, Configuration.redirectURI);
         instagramSession = instagram.getSession();
 
+        String actionReason = getIntent().getStringExtra("action");
+        if(actionReason != null && actionReason.equals("logout")) {
+            instagramSession.reset();
+            showToast("Logged out");
+            finish();
+            startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+        }
+
         if (instagramSession.isActive()) {
             InstagramUser instagramUser = instagramSession.getUser();
             showToast("Logged in as: " + instagramUser.username);
+            finish();
             startActivity(new Intent(LoginActivity.this, FeedActivity.class));
         }
         else {

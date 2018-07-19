@@ -1,13 +1,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/photo"
-        android:adjustViewBounds="true"
-        android:layout_height="400dp"
-        android:scaleType="centerInside"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_width="match_parent"/>
+        android:adjustViewBounds="true"
+        android:contentDescription="TODO"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:text="Foobarbaz"
+        android:typeface="sans"
+        app:fontFamily="monospace" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:typeface="sans"
+        app:fontFamily="monospace" />
+
 
 </LinearLayout>

@@ -1,9 +1,16 @@
 package com.travel.reco;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -31,6 +38,7 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
         setupPusher();
         setupRecyclerView();
+        setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
     }
 
     // Get the RecyclerView, use LinearLayout as the layout manager, and set custom adapter
@@ -95,9 +103,33 @@ public class FeedActivity extends AppCompatActivity {
                         ((LinearLayoutManager) lManager).scrollToPositionWithOffset(adapter.getItemCount() - 1, 0);
                     }
                 }
-
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User chose the "logout" item, show the app settings UI...
+                Intent intent = new Intent(FeedActivity.this, LoginActivity.class);
+                intent.putExtra("action", "logout");
+                finish();
+                startActivity(intent);
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_feed, menu);
+        return true;
     }
 
     @Override

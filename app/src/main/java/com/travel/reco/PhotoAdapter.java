@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -41,16 +42,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView photoImageView;
+        public TextView locationTextView;
+        public TextView descriptionTextView;
 
         public PhotoViewHolder(View v) {
             super(v);
             photoImageView = v.findViewById(R.id.photo);
+            locationTextView = v.findViewById(R.id.location);
+            descriptionTextView = v.findViewById(R.id.description);
         }
     }
 
     @Override
-
-
     public PhotoViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item, viewGroup, false);
@@ -70,5 +73,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 .load(url)
                 .apply(options)
                 .into(holder.photoImageView);
+        holder.locationTextView.setText(photo.getLocation());
+        holder.descriptionTextView.setText(photo.getDescription());
     }
 }
