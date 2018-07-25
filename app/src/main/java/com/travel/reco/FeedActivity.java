@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -23,11 +24,16 @@ import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionStateChange;
 
+import com.pusher.pushnotifications.PushNotificationReceivedListener;
+import com.pusher.pushnotifications.PushNotifications;
+
 public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView.LayoutManager lManager;
     private PhotoAdapter adapter;
     private Pusher pusher;
+    private boolean logoutCommandRecieved = false;
+    private static String imageChannel;
     private static final String prependEvent = "prependEvent";
     private static final String appendEvent = "appendEvent";
     private static final String CHANNEL_NAME = "my-channel";
@@ -39,6 +45,15 @@ public class FeedActivity extends AppCompatActivity {
         setupPusher();
         setupRecyclerView();
         setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
+        PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
+        PushNotifications.subscribe("relogin");
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, new PushNotificationReceivedListener() {
+            @Override
+            public void onMessageReceived(RemoteMessage remoteMessage) {
+                logoutCommandRecieved = true;
+                logout();
+            }
+        });
     }
 
     // Get the RecyclerView, use LinearLayout as the layout manager, and set custom adapter
@@ -108,20 +123,29 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(logoutCommandRecieved)
+        {
+            logout();
+        }
+    }
+
+    private void logout() {
+        Intent intent = new Intent(FeedActivity.this, LoginActivity.class);
+        intent.putExtra("action", "logout");
+        finish();
+        startActivity(intent);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                // User chose the "logout" item, show the app settings UI...
-                Intent intent = new Intent(FeedActivity.this, LoginActivity.class);
-                intent.putExtra("action", "logout");
-                finish();
-                startActivity(intent);
+                logout();
                 return true;
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
     }
 

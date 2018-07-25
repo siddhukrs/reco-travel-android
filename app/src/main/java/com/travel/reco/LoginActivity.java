@@ -8,33 +8,46 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.RemoteMessage;
+import com.pusher.client.Pusher;
+import com.pusher.pushnotifications.PushNotificationReceivedListener;
+import com.pusher.pushnotifications.PushNotifications;
+
 import net.londatiga.android.instagram.*;
+
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Instagram instagram;
     private InstagramSession instagramSession;
+    private boolean logoutCommandRecieved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
+        PushNotifications.subscribe("relogin");
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, new PushNotificationReceivedListener() {
+            @Override
+            public void onMessageReceived(RemoteMessage remoteMessage) {
+                logoutCommandRecieved = true;
+                logout();
+            }
+        });
         instagram = new Instagram(this, Configuration.clientId, Configuration.clientSecret, Configuration.redirectURI);
         instagramSession = instagram.getSession();
 
         String actionReason = getIntent().getStringExtra("action");
         if(actionReason != null && actionReason.equals("logout")) {
-            instagramSession.reset();
-            showToast("Logged out");
-            finish();
-            startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+            logout();
         }
 
         if (instagramSession.isActive()) {
-            InstagramUser instagramUser = instagramSession.getUser();
-            showToast("Logged in as: " + instagramUser.username);
+
             finish();
-            startActivity(new Intent(LoginActivity.this, FeedActivity.class));
+            login();
         }
         else {
             setContentView(R.layout.activity_login);
@@ -46,6 +59,24 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void login() {
+        InstagramUser instagramUser = instagramSession.getUser();
+        String accessToken = instagramSession.getAccessToken();
+        String username = instagramUser.username;
+
+        showToast("Logged in as " + username);
+        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
+    }
+
+    private void logout() {
+        instagramSession.reset();
+        showToast("Logged out");
+        finish();
+        startActivity(new Intent(LoginActivity.this, LoginActivity.class));
     }
 
     private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener() {
@@ -67,5 +98,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(logoutCommandRecieved)
+        {
+            logout();
+        }
     }
 }

@@ -4,11 +4,12 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.travel.reco"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -39,4 +40,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'com.pusher:pusher-java-client:1.5.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation 'com.pusher:push-notifications-android:0.10.1'
+    implementation 'com.android.support:multidex:1.0.3'
 }
+apply plugin: 'com.google.gms.google-services'
