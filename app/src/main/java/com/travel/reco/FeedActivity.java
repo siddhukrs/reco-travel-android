@@ -9,20 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionStateChange;
 
 import com.pusher.pushnotifications.PushNotificationReceivedListener;
 import com.pusher.pushnotifications.PushNotifications;
@@ -31,20 +23,15 @@ public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView.LayoutManager lManager;
     private PhotoAdapter adapter;
-    private Pusher pusher;
     private boolean logoutCommandRecieved = false;
-    private static String imageChannel;
-    private static final String prependEvent = "prependEvent";
-    private static final String appendEvent = "appendEvent";
-    private static final String CHANNEL_NAME = "my-channel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String username = getIntent().getStringExtra("username");
         setContentView(R.layout.activity_feed);
-        setupPusher();
-        setupRecyclerView();
-        setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
+
         PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
         PushNotifications.subscribe("relogin");
         PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, new PushNotificationReceivedListener() {
@@ -54,6 +41,13 @@ public class FeedActivity extends AppCompatActivity {
                 logout();
             }
         });
+
+        PusherConfiguration.subscribeToPrivateChannel(username);
+        PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.appendEntryEvent, appendAndScrollEventListener);
+        PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.prependEntryEvent, prependAndScrollMessageListener);
+
+        setupRecyclerView();
+        setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
     }
 
     // Get the RecyclerView, use LinearLayout as the layout manager, and set custom adapter
@@ -63,26 +57,6 @@ public class FeedActivity extends AppCompatActivity {
         adapter = new PhotoAdapter(this, new ArrayList<Photo>());
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
-    }
-
-    private void setupPusher() {
-        PusherOptions options = new PusherOptions().setCluster("us2");
-        pusher = new Pusher(Configuration.pusherApiKey, options);
-        Channel channel = pusher.subscribe(CHANNEL_NAME);
-        channel.bind(appendEvent, appendAndScrollEventListener);
-        channel.bind(prependEvent, prependAndScrollMessageListener);
-        pusher.connect(new ConnectionEventListener() {
-            @Override
-            public void onConnectionStateChange(ConnectionStateChange change) {
-                System.out.println("State changed to " + change.getCurrentState() + " from " + change.getPreviousState());
-            }
-
-            @Override
-            public void onError(String message, String code, Exception e) {
-                System.out.println("There was a problem connecting!");
-                e.printStackTrace();
-            }
-        });
     }
 
     SubscriptionEventListener appendAndScrollEventListener = new SubscriptionEventListener() {
@@ -159,6 +133,6 @@ public class FeedActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        pusher.disconnect();
+        PusherConfiguration.disconnect();
     }
 }

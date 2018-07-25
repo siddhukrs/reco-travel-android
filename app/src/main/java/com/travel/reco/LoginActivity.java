@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (instagramSession.isActive()) {
-
-            finish();
             login();
         }
         else {
@@ -66,7 +64,12 @@ public class LoginActivity extends AppCompatActivity {
         String accessToken = instagramSession.getAccessToken();
         String username = instagramUser.username;
 
+        PusherConfiguration.setupPusher();
+        PusherConfiguration.subscribeToPublicChannel();
+        PusherConfiguration.sendKeyOnLogin(accessToken, username);
+
         showToast("Logged in as " + username);
+        finish();
         Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
@@ -82,8 +85,7 @@ public class LoginActivity extends AppCompatActivity {
     private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener() {
         @Override
         public void onSuccess(InstagramUser user) {
-            finish();
-            startActivity(new Intent(LoginActivity.this, FeedActivity.class));
+            login();
         }
 
         @Override
@@ -103,8 +105,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(logoutCommandRecieved)
-        {
+        if(logoutCommandRecieved) {
             logout();
         }
     }
