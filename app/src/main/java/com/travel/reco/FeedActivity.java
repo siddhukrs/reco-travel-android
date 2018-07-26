@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
@@ -54,7 +56,14 @@ public class FeedActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         RecyclerView recycler = findViewById(R.id.recycler_view);
         lManager = new LinearLayoutManager(this);
-        adapter = new PhotoAdapter(this, new ArrayList<Photo>());
+        adapter = new PhotoAdapter(this, new ArrayList<Photo>(), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("http://www.united.com");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
     }
@@ -72,6 +81,8 @@ public class FeedActivity extends AppCompatActivity {
             addImageToView(data, true, true);
         }
     };
+
+
 
     private void addImageToView(final String jsonUrlData, final boolean prepend, final boolean scrollToImage) {
         runOnUiThread(new Runnable() {

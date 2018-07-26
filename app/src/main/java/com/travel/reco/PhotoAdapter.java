@@ -1,6 +1,8 @@
 package com.travel.reco;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +19,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private List<Photo> photos;
     private Context context;
+    public View.OnClickListener onUnitedClickListener;
 
-    public PhotoAdapter(Context context, List<Photo> photos) {
+    public PhotoAdapter(Context context, List<Photo> photos, View.OnClickListener onClickListener) {
         this.photos = photos;
         this.context = context;
+        onUnitedClickListener = onClickListener;
     }
 
     public void prependPhoto(Photo photo) {
@@ -44,12 +48,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         public ImageView photoImageView;
         public TextView locationTextView;
         public TextView descriptionTextView;
+        public ImageView unitedImage;
 
         public PhotoViewHolder(View v) {
             super(v);
             photoImageView = v.findViewById(R.id.photo);
             locationTextView = v.findViewById(R.id.location);
             descriptionTextView = v.findViewById(R.id.description);
+            unitedImage = v.findViewById(R.id.unitedImage);
         }
     }
 
@@ -75,5 +81,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 .into(holder.photoImageView);
         holder.locationTextView.setText(photo.getLocation());
         holder.descriptionTextView.setText(photo.getDescription());
+        holder.unitedImage.setOnClickListener(onUnitedClickListener);
     }
 }
