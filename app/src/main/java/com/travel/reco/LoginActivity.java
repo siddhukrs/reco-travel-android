@@ -63,15 +63,17 @@ public class LoginActivity extends AppCompatActivity {
         InstagramUser instagramUser = instagramSession.getUser();
         String accessToken = instagramSession.getAccessToken();
         String username = instagramUser.username;
+        String userId = instagramUser.id;
 
         PusherConfiguration.setupPusher();
-        PusherConfiguration.subscribeToPublicChannel();
-        PusherConfiguration.sendKeyOnLogin(accessToken, username);
 
         showToast("Logged in as " + username);
         finish();
         Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
         intent.putExtra("username", username);
+        intent.putExtra("userId", userId);
+        intent.putExtra("accessToken", accessToken);
+        intent.putExtra("groupId", 1);
         startActivity(intent);
     }
 

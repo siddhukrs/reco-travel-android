@@ -6,9 +6,9 @@ public class Photo {
 
     private String url;
     private String location;
-    private String description;
+    private String[] description;
 
-    public Photo(String url, String location, String description) {
+    public Photo(String url, String location, String[] description) {
         this.url = url;
         this.description = description;
         this.location = location;
@@ -20,7 +20,7 @@ public class Photo {
     public String getLocation() {
         return location;
     }
-    public String getDescription() {
+    public String[] getDescription() {
         return description;
     }
 }

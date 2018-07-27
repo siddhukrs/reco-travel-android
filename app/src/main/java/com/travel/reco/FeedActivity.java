@@ -31,7 +31,14 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String userId = getIntent().getStringExtra("userId");
         String username = getIntent().getStringExtra("username");
+        String accessToken = getIntent().getStringExtra("accessToken");
+        String groupId = getIntent().getStringExtra("groupId");
+        HTTPCaller caller = new HTTPCaller();
+        caller.execute(Configuration.tokenEndpoint,
+                "{\"user_id\":\"" + userId + "\", \"access_token\":\"" + accessToken + "\", \"group_id\": " + groupId + "}");
+
         setContentView(R.layout.activity_feed);
 
         PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);

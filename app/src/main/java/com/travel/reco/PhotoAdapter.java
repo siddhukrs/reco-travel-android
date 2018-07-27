@@ -1,8 +1,6 @@
 package com.travel.reco;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +78,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 .apply(options)
                 .into(holder.photoImageView);
         holder.locationTextView.setText(photo.getLocation());
-        holder.descriptionTextView.setText(photo.getDescription());
+        String[] tags = photo.getDescription();
+        String desc = "";
+        for (String tag:tags) {
+            desc = desc + tag + ", ";
+        }
+        holder.descriptionTextView.setText(desc.subSequence(0, desc.length() - 1));
         holder.unitedImage.setOnClickListener(onUnitedClickListener);
     }
 }

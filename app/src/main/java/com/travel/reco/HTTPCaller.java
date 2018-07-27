@@ -2,9 +2,7 @@ package com.travel.reco;
 
 import android.os.AsyncTask;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,26 +15,34 @@ public class HTTPCaller extends AsyncTask<String, String, String> {
     }
 
     @Override
+    protected void onPostExecute(String result) {
+        System.out.println("response received");
+    }
+
+    @Override
     protected String doInBackground(String... params) {
-        String urlString = params[0];
-        String data = params[1];
-        OutputStream out = null;
-
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
+            URL url = new URL(params[0]);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.write(data);
-            writer.flush();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Accept", "*/*");
+
+            connection.setDoOutput(true);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+            writer.write(params[1]);
             writer.close();
-            out.close();
 
-            urlConnection.connect();
+            connection.connect();
+
+            // Response: 400
+            System.out.println("Response : " +  connection.getResponseMessage() + "");
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.toString() + "Something with request");
         }
-        return urlString;
+
+        return null;
     }
 }
