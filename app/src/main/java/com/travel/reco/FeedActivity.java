@@ -2,6 +2,7 @@ package com.travel.reco;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,12 +17,18 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
 
 import com.pusher.pushnotifications.PushNotificationReceivedListener;
 import com.pusher.pushnotifications.PushNotifications;
 
 public class FeedActivity extends AppCompatActivity {
+
+    private String userId;
+    private String username;
+    private String accessToken;
+    private String groupId;
 
     private RecyclerView.LayoutManager lManager;
     private PhotoAdapter adapter;
@@ -31,32 +38,74 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String userId = getIntent().getStringExtra("userId");
-        String username = getIntent().getStringExtra("username");
-        String accessToken = getIntent().getStringExtra("accessToken");
-        String groupId = getIntent().getStringExtra("groupId");
-        HTTPCaller caller = new HTTPCaller();
-        caller.execute(Configuration.tokenEndpoint,
-                "{\"user_id\":\"" + userId + "\", \"access_token\":\"" + accessToken + "\", \"group_id\": " + groupId + "}");
+        userId = getIntent().getStringExtra("userId");
+        username = getIntent().getStringExtra("username");
+        accessToken = getIntent().getStringExtra("accessToken");
+        groupId = getIntent().getStringExtra("groupId");
 
         setContentView(R.layout.activity_feed);
+        setupRecyclerView();
+        setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
+        setupSwipeToRefresh();
 
-        PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
-        PushNotifications.subscribe("relogin");
-        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, new PushNotificationReceivedListener() {
+        setupPusherSubscriptions();
+    }
+
+    private void setupPusherSubscriptions() {
+
+        PushNotificationReceivedListener logoutPushNotificationListener = new PushNotificationReceivedListener() {
             @Override
             public void onMessageReceived(RemoteMessage remoteMessage) {
                 logoutCommandRecieved = true;
                 logout();
             }
-        });
+        };
+        PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
+        PushNotifications.subscribe("relogin");
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, logoutPushNotificationListener);
 
-        PusherConfiguration.subscribeToPrivateChannel(username);
+        SubscriptionEventListener appendAndScrollEventListener = new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String channel, final String event, final String data) {
+                addImageToView(data, false, true);
+            }
+        };
+
+        SubscriptionEventListener prependAndScrollMessageListener = new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String channel, final String event, final String data) {
+                addImageToView(data, true, true);
+            }
+        };
+
+        ChannelEventListener subscriptionSuccessListener = new ChannelEventListener() {
+            @Override
+            public void onSubscriptionSucceeded(String channelName) {
+                System.out.println("Subscribed!");
+                HTTPCaller tokenCaller = new HTTPCaller();
+                tokenCaller.execute(Configuration.tokenEndpoint,
+                        "{\"user_id\":\"" + userId + "\", \"access_token\":\"" + accessToken + "\", \"group_id\": " + groupId + "}");
+            }
+            @Override
+            public void onEvent(String channelName, String eventName, String data) {
+            }
+        };
+
+        PusherConfiguration.subscribeToPrivateChannel(username, subscriptionSuccessListener);
         PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.appendEntryEvent, appendAndScrollEventListener);
         PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.prependEntryEvent, prependAndScrollMessageListener);
+    }
 
-        setupRecyclerView();
-        setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
+    private void setupSwipeToRefresh() {
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pullToRefresh.setRefreshing(false);
+                HTTPCaller refreshCaller = new HTTPCaller();
+                refreshCaller.execute(Configuration.recoEndpoint, "{}");
+            }
+        });
     }
 
     // Get the RecyclerView, use LinearLayout as the layout manager, and set custom adapter
@@ -74,22 +123,6 @@ public class FeedActivity extends AppCompatActivity {
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
     }
-
-    SubscriptionEventListener appendAndScrollEventListener = new SubscriptionEventListener() {
-        @Override
-        public void onEvent(String channel, final String event, final String data) {
-            addImageToView(data, false, true);
-        }
-    };
-
-    SubscriptionEventListener prependAndScrollMessageListener = new SubscriptionEventListener() {
-        @Override
-        public void onEvent(String channel, final String event, final String data) {
-            addImageToView(data, true, true);
-        }
-    };
-
-
 
     private void addImageToView(final String jsonUrlData, final boolean prepend, final boolean scrollToImage) {
         runOnUiThread(new Runnable() {

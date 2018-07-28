@@ -3,6 +3,7 @@ package com.travel.reco;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
 
 public class PusherConfiguration {
@@ -21,9 +22,9 @@ public class PusherConfiguration {
         publicChannel = pusher.subscribe(publicChannelName);
     }
 
-    public static void subscribeToPrivateChannel(String userName) {
+    public static void subscribeToPrivateChannel(String userName, ChannelEventListener subscriptionSuccessListener) {
         privateChannelName = userName;
-        privateChannel = pusher.subscribe(privateChannelName);
+        privateChannel = pusher.subscribe(privateChannelName, subscriptionSuccessListener);
     }
 
     public static void subscribeToEventOnPrivateChannel (String eventName, SubscriptionEventListener listener) {
