@@ -4,17 +4,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/photo"
+    <com.synnapps.carouselview.CarouselView
+        android:id="@+id/carouselView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="TODO"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:scaleType="centerInside" />
+        android:layout_height="350dp"
+        app:disableAutoPlayOnUserInteraction="true"
+        app:fillColor="#FFFFFFFF"
+        app:pageColor="#00000000"
+        app:radius="6dp"
+        app:slideInterval="3000"
+        app:strokeColor="#FFFFFFFF"
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/location"
@@ -49,12 +49,6 @@
         android:scaleX="1.2"
         android:scaleY="1.2"
         app:srcCompat="@mipmap/ic_launcher_foreground" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider" />
 
 
 </LinearLayout>

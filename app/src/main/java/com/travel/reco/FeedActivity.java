@@ -123,13 +123,13 @@ public class FeedActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
     }
 
-    private void addImageToView(final String jsonUrlData, final boolean prepend, final boolean scrollToImage) {
+    private void addImageToView(final String jsonData, final boolean prepend, final boolean scrollToImage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Received event with data: " + jsonUrlData);
+                System.out.println("Received event with data: " + jsonData);
                 Gson gson = new Gson();
-                Photo photo = gson.fromJson(jsonUrlData, Photo.class);
+                Photo photo = gson.fromJson(jsonData, Photo.class);
                 if(prepend == true) {
                     adapter.prependPhoto(photo);
                     if(scrollToImage) {

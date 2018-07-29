@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
 
 import java.util.List;
 
@@ -43,14 +45,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView photoImageView;
+        public CarouselView imageCarouselView;
         public TextView locationTextView;
         public TextView descriptionTextView;
         public ImageView unitedImage;
 
         public PhotoViewHolder(View v) {
             super(v);
-            photoImageView = v.findViewById(R.id.photo);
+            imageCarouselView = v.findViewById(R.id.carouselView);
             locationTextView = v.findViewById(R.id.location);
             descriptionTextView = v.findViewById(R.id.description);
             unitedImage = v.findViewById(R.id.unitedImage);
@@ -67,20 +69,25 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @Override
     public void onBindViewHolder(PhotoViewHolder holder, int position) {
         Photo photo = photos.get(position);
-        String url = photo.getUrl();
-        RequestOptions options = new RequestOptions()
-                .fitCenter()
-                .error(R.drawable.ic_cross_solid);
+        final String[] urls = photo.getUrls();
+        holder.imageCarouselView.setPageCount(urls.length);
+        holder.imageCarouselView.setImageListener(new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView imageView) {
+                RequestOptions options = new RequestOptions()
+                        .fitCenter()
+                        .error(R.drawable.ic_cross_solid);
+                Glide.with(context)
+                        .asBitmap()
+                        .load(urls[position])
+                        .apply(options)
+                        .into(imageView);
+            }
+        });
 
-        Glide.with(context)
-                .asBitmap()
-                .load(url)
-                .apply(options)
-                .into(holder.photoImageView);
         holder.locationTextView.setText(photo.getLocation());
-        String[] tags = photo.getDescription();
         String desc = "";
-        for (String tag:tags) {
+        for (String tag : photo.getDescription()) {
             desc = desc + tag + ", ";
         }
         holder.descriptionTextView.setText(desc.subSequence(0, desc.length() - 1));
