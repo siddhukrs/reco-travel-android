@@ -14,14 +14,6 @@ public class PusherConfiguration {
     public static final String prependEntryEvent = "prependEntryEvent";
     public static final String appendEntryEvent = "appendEntryEvent";
 
-    public static Channel publicChannel;
-    private static final String publicChannelName = "publicChannel";
-    private static final String sendKeyEvent = "keyEvent";
-
-    public static void subscribeToPublicChannel() {
-        publicChannel = pusher.subscribe(publicChannelName);
-    }
-
     public static void subscribeToPrivateChannel(String userName, ChannelEventListener subscriptionSuccessListener) {
         privateChannelName = userName;
         privateChannel = pusher.subscribe(privateChannelName, subscriptionSuccessListener);
@@ -29,9 +21,6 @@ public class PusherConfiguration {
 
     public static void subscribeToEventOnPrivateChannel (String eventName, SubscriptionEventListener listener) {
         privateChannel.bind(eventName, listener);
-    }
-
-    public static void sendKeyOnLogin (String key, String userName) {
     }
 
     public static void setupPusher() {
