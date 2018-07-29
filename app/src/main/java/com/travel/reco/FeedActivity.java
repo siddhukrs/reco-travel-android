@@ -32,7 +32,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView.LayoutManager lManager;
     private PhotoAdapter adapter;
-    private boolean logoutCommandRecieved = false;
+    private boolean modelReadyCommandRecieved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +53,15 @@ public class FeedActivity extends AppCompatActivity {
 
     private void setupPusherSubscriptions() {
 
-        PushNotificationReceivedListener logoutPushNotificationListener = new PushNotificationReceivedListener() {
+        PushNotificationReceivedListener modelReadyPushNotificationListener = new PushNotificationReceivedListener() {
             @Override
             public void onMessageReceived(RemoteMessage remoteMessage) {
-                logoutCommandRecieved = true;
-                logout();
+                modelReadyCommandRecieved = true;
             }
         };
         PushNotifications.start(getApplicationContext(), Configuration.pushNotificationsClientId);
-        PushNotifications.subscribe("relogin");
-        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, logoutPushNotificationListener);
+        PushNotifications.subscribe("model-ready");
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, modelReadyPushNotificationListener);
 
         SubscriptionEventListener appendAndScrollEventListener = new SubscriptionEventListener() {
             @Override
@@ -150,10 +149,6 @@ public class FeedActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(logoutCommandRecieved)
-        {
-            logout();
-        }
     }
 
     private void logout() {
