@@ -84,7 +84,7 @@ public class FeedActivity extends AppCompatActivity {
                 System.out.println("Subscribed!");
                 HTTPCaller tokenCaller = new HTTPCaller();
                 tokenCaller.execute(Configuration.tokenEndpoint,
-                        "{\"user_id\":\"" + userId + "\", \"access_token\":\"" + accessToken + "\", \"group_id\": " + groupId + "}");
+                        "{\"user_id\":\"" + userId + "\", \"access_token\":\"" + accessToken + "\", \"group_id\": \"" + groupId + "\"}");
             }
             @Override
             public void onEvent(String channelName, String eventName, String data) {

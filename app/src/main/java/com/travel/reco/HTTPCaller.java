@@ -40,7 +40,7 @@ public class HTTPCaller extends AsyncTask<String, String, String> {
             System.out.println("Response : " +  connection.getResponseMessage() + "");
 
         } catch (Exception e) {
-            System.out.println(e.toString() + "Something with request");
+            System.out.println(e.toString() + "Something wrong with request");
         }
 
         return null;

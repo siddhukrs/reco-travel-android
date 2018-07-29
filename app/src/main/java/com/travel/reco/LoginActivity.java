@@ -1,6 +1,8 @@
 package com.travel.reco;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +23,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Instagram instagram;
     private InstagramSession instagramSession;
-    private boolean logoutCommandRecieved = false;
+    private boolean logoutCommandReceived = false;
+    private String groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +35,11 @@ public class LoginActivity extends AppCompatActivity {
         PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, new PushNotificationReceivedListener() {
             @Override
             public void onMessageReceived(RemoteMessage remoteMessage) {
-                logoutCommandRecieved = true;
+                logoutCommandReceived = true;
                 logout();
             }
         });
+
         instagram = new Instagram(this, Configuration.clientId, Configuration.clientSecret, Configuration.redirectURI);
         instagramSession = instagram.getSession();
 
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (instagramSession.isActive()) {
+            loadData();
             login();
         }
         else {
@@ -53,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
             instagramIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
+                    groupId = ((TextView)findViewById(R.id.groupId)).getText().toString();
+                    saveData();
                     instagram.authorize(mAuthListener);
                 }
             });
@@ -73,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         intent.putExtra("userId", userId);
         intent.putExtra("accessToken", accessToken);
-        intent.putExtra("groupId", 1);
+        intent.putExtra("groupId", groupId);
         startActivity(intent);
     }
 
@@ -107,8 +114,31 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(logoutCommandRecieved) {
+        loadData();
+        if(logoutCommandReceived) {
             logout();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveData();
+    }
+
+    private void saveData() {
+        SharedPreferences sp =
+                getSharedPreferences("GroupPreferences",
+                        Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("groupId", groupId);
+        editor.commit();
+    }
+
+    private void loadData() {
+        SharedPreferences sp =
+                getSharedPreferences("GroupPreferences",
+                        Context.MODE_PRIVATE);
+        groupId = sp.getString("groupId", groupId);
     }
 }
