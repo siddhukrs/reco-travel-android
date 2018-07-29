@@ -47,14 +47,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         public CarouselView imageCarouselView;
         public TextView locationTextView;
-        public TextView descriptionTextView;
         public ImageView unitedImage;
 
         public PhotoViewHolder(View v) {
             super(v);
             imageCarouselView = v.findViewById(R.id.carouselView);
             locationTextView = v.findViewById(R.id.location);
-            descriptionTextView = v.findViewById(R.id.description);
             unitedImage = v.findViewById(R.id.unitedImage);
         }
     }
@@ -90,7 +88,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         for (String tag : photo.getDescription()) {
             desc = desc + tag + ", ";
         }
-        holder.descriptionTextView.setText(desc.subSequence(0, desc.length() - 1));
         holder.unitedImage.setOnClickListener(onUnitedClickListener);
     }
 }
