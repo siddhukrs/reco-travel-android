@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ public class FeedActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager lManager;
     private PhotoAdapter adapter;
     private boolean modelReadyCommandRecieved = false;
+    private Configuration configuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class FeedActivity extends AppCompatActivity {
         username = getIntent().getStringExtra("username");
         accessToken = getIntent().getStringExtra("accessToken");
         groupId = getIntent().getStringExtra("groupId");
-
+        configuration = new Configuration();
         setContentView(R.layout.activity_feed);
         setupRecyclerView();
         setSupportActionBar((Toolbar)findViewById(R.id.top_toolbar));
@@ -116,7 +118,10 @@ public class FeedActivity extends AppCompatActivity {
         adapter = new PhotoAdapter(this, new ArrayList<Photo>(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("http://www.united.com");
+                String location = ((TextView)v.findViewById(R.id.location)).getText().toString();
+                Uri uri = Uri.parse("https://www.united.com/ual/en/us/flight-search/book-a-flight/results/rev?f=AUS&t="
+                        + configuration.getAirportCode(location)
+                        + "&d=2018-09-21&r=2018-09-23&px=1&taxng=1&idx=1");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
