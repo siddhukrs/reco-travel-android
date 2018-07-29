@@ -90,7 +90,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         };
 
-        PusherConfiguration.subscribeToPrivateChannel(username, subscriptionSuccessListener);
+        PusherConfiguration.subscribeToPrivateChannel(userId, subscriptionSuccessListener);
         PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.appendEntryEvent, appendAndScrollEventListener);
         PusherConfiguration.subscribeToEventOnPrivateChannel(PusherConfiguration.prependEntryEvent, prependAndScrollMessageListener);
     }
@@ -100,9 +100,11 @@ public class FeedActivity extends AppCompatActivity {
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                clearAllImages();
                 pullToRefresh.setRefreshing(false);
                 HTTPCaller refreshCaller = new HTTPCaller();
-                refreshCaller.execute(Configuration.recoEndpoint, "{}");
+                refreshCaller.execute(Configuration.recoEndpoint,
+                        "{\"user_id\":\"" + userId + "\", \"group_id\":\"" + groupId + "\"}");
             }
         });
     }
@@ -121,6 +123,11 @@ public class FeedActivity extends AppCompatActivity {
         });
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
+    }
+
+    private void clearAllImages() {
+        adapter.clearPhotos();
+        adapter.notifyDataSetChanged();
     }
 
     private void addImageToView(final String jsonData, final boolean prepend, final boolean scrollToImage) {

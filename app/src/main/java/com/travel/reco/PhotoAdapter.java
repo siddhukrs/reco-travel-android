@@ -38,6 +38,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         notifyItemInserted(itemCount);
     }
 
+    public void clearPhotos() {
+        photos.clear();
+    }
+
     @Override
     public int getItemCount() {
         return photos.size();
@@ -83,11 +87,23 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             }
         });
 
-        holder.locationTextView.setText(photo.getLocation());
+        holder.locationTextView.setText(upperCaseWords(photo.getLocation()));
         String desc = "";
         for (String tag : photo.getDescription()) {
             desc = desc + tag + ", ";
         }
         holder.unitedImage.setOnClickListener(onUnitedClickListener);
+    }
+
+    public static String upperCaseWords(String sentence) {
+        String words[] = sentence.replaceAll("\\s+", " ").trim().split(" ");
+        String newSentence = "";
+        for (String word : words) {
+            for (int i = 0; i < word.length(); i++)
+                newSentence = newSentence + ((i == 0) ? word.substring(i, i + 1).toUpperCase():
+                        (i != word.length() - 1) ? word.substring(i, i + 1).toLowerCase() : word.substring(i, i + 1).toLowerCase().toLowerCase() + " ");
+        }
+
+        return newSentence;
     }
 }
