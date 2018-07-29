@@ -118,7 +118,9 @@ public class FeedActivity extends AppCompatActivity {
         adapter = new PhotoAdapter(this, new ArrayList<Photo>(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String location = ((TextView)v.findViewById(R.id.location)).getText().toString();
+                View parentView = (View)v.getParent();
+                TextView locationTextView = parentView.findViewById(R.id.location);
+                String location = locationTextView.getText().toString();
                 Uri uri = Uri.parse("https://www.united.com/ual/en/us/flight-search/book-a-flight/results/rev?f=AUS&t="
                         + configuration.getAirportCode(location)
                         + "&d=2018-09-21&r=2018-09-23&px=1&taxng=1&idx=1");
