@@ -4,33 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33cccc"
     tools:context=".LoginActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <ImageView
         android:id="@+id/ig_icon"
-        android:layout_width="118dp"
-        android:layout_height="117dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_ig_glyph_fill" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:typeface="monospace"
-        app:fontFamily="sans-serif"
+        android:layout_width="90dp"
+        android:layout_height="99dp"
+        android:layout_marginBottom="172dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.295" />
+        app:layout_constraintTop_toBottomOf="@+id/groupId"
+        app:srcCompat="@drawable/ic_ig_glyph_fill" />
 
     <android.support.constraint.Barrier
         android:id="@+id/barrier2"
@@ -42,25 +30,30 @@
         android:id="@+id/groupId"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
+        android:width="150dp"
         android:ems="10"
-        android:hint="Enter GroupID"
+        android:hint="Enter Group ID"
         android:inputType="textPersonName"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ig_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.56" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.447" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="127dp"
-        android:layout_height="40dp"
-        android:text="PICKLE"
+        android:layout_width="304dp"
+        android:layout_height="145dp"
+        android:layout_marginTop="76dp"
+        android:fontFamily="cursive"
+        android:text="Pickle"
         android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        android:textColor="#ffffff"
+        android:textSize="90sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/groupId"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
