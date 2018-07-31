@@ -34,10 +34,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/united.png" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="ic_united" />
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="33cccc" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Documents/hack/My Post.png" />
+                                      <entry key="outputName" value="ic_pickle" />
                                     </map>
                                   </option>
                                 </PersistentState>
